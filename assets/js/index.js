@@ -34,7 +34,7 @@ animal.addEventListener("change", async () => {
         let edad = edadSelect.value;
         let animalSeleccionado = animal.value;
         let animales = await getAnimales;
-        let AnimalesContainer = document.getElementById('Tabla')
+        let Animales = document.getElementById('Animales')
         let imagenResult = animales.find(
             (animal) => animal.name == animalSeleccionado
         );
@@ -56,24 +56,20 @@ animal.addEventListener("change", async () => {
                 let AguilaObjeto = new Aguila(nombre, edad, img, comentarios, sonido);
             };
     
-            let card = `
-        <div class="card" style="width: 12rem;">
-                <img
-                    class="card-img-top"
-                    src="./assets/imgs/${imagenResult.imagen}" alt="animal"
-                    data-toggle="modal" data-target="#exampleModal"
-                    onclick="modalDetails()"
-                />
-            <div class="card-body">
-                <button onclick="playSound()" 
-                class="btn btn-secondary w-100"> 
-                <img height="30" src="assets/imgs/audio.svg" /> 
-                </button>
-            </div>
-            </div>
+            
+            // Recorre la lista de animales y crea una tarjeta para cada uno
+animales.forEach(animal => {
+    const card = `
+        <div class="card px-3 pb-3" style="width: 22rem;">
+        <img src="./assets/imgs/${animal.imagen}" alt="${animal.nombre}" class="card-img-top">
+        <div class="card-body">
+            <audio class="card-text" src="./assets/sounds/${animal.sonido}" controls></audio>
         </div>
-        `
-            AnimalesContainer.innerHTML += card;
+        </div>
+    `;
+  // Agrega la tarjeta al contenedor
+    Animales.innerHTML += card;
+});
 
             
         } else {
