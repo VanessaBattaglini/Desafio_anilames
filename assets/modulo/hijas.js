@@ -26,7 +26,7 @@ class Oso extends Animal {
         super(nombre, edad, img, comentarios, sonido)
     };
 
-    gruñir() {
+    grunir() {
         audioPlayer.src = `./assets/sounds/${this._sonido}`;
         audioPlayer.play();
     }

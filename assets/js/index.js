@@ -13,64 +13,68 @@ let edadSelect = document.getElementById("edad");
 let comentariosSelect = document.getElementById("comentarios");
 let btnRegistrar = document.getElementById("btnRegistrar");
 let preview = document.getElementById("preview");
+let player = document.getElementById("player");
 
- //Para limpiar los inputs
-        // document.getElementById("animal") = '';
-        // document.getElementById("edad") = '';
-        // document.getElementById("comentarios") = '';
+//Array de objetos vacio para guardar la lista de animales a mostrar
+
+let animalitos = [];
+
+//Evento change para cambia la imagen de animal para mostrarlo
+
 animal.addEventListener("change", async () => {
     let animalSeleccionado = animal.value;
     let animales = await getAnimales;
 
+    //Validación de la imagen del animal cuando se seleccione el animal
     let animalResult = animales.find(
         (animal) => animal.name == animalSeleccionado
     );
 
     preview.style.backgroundImage = `url(./assets/imgs/${animalResult.imagen})`;
 
-
+//Evento de click para agregar la imagen y sonido
     btnRegistrar.addEventListener("click", async () => {
         let nombre = animal.value;
         let edad = edadSelect.value;
         let animalSeleccionado = animal.value;
         let animales = await getAnimales;
-        let Animales = document.getElementById('Animales')
+
+//Validación de la imagen seleccionada por el usuario
         let imagenResult = animales.find(
             (animal) => animal.name == animalSeleccionado
         );
-        console.log(imagenResult.imagen);
         let comentarios = comentariosSelect.value;
-        let img = `.assets/imgs/${imagenResult.imagen}`;
-        let sonido = `.assets/sounds/${imagenResult.sonido}`;
+        //Datos que va a mostrar en la card
+        let imagen = `${imagenResult.imagen}`;
+        let sonido = `${imagenResult.sonido}`;
         
-        if (animal && edad && comentarios) {
-            if (animal.value == "Leon") {
-                let LeonObjeto = new Leon(nombre, edad, img, comentarios, sonido);
-            } else if (animal.value == "Lobo") {
-                let LoboObjeto = new Lobo(nombre, edad, img, comentarios, sonido);
-            } else if (animal.value == "Oso") {
-                let OsoObjeto = new Oso(nombre, edad, img, comentarios, sonido);
-            } else if (animal.value == "Serpiente") {
-                let SerpienteObjeto = new Serpiente(nombre, edad, img, comentarios, sonido);
-            } else if (animal.value == "Aguila") {
-                let AguilaObjeto = new Aguila(nombre, edad, img, comentarios, sonido);
-            };
-    
-            
-            // Recorre la lista de animales y crea una tarjeta para cada uno
-animales.forEach(animal => {
-    const card = `
-        <div class="card px-3 pb-3" style="width: 22rem;">
-        <img src="./assets/imgs/${animal.imagen}" alt="${animal.nombre}" class="card-img-top">
-        <div class="card-body">
-            <audio class="card-text" src="./assets/sounds/${animal.sonido}" controls></audio>
-        </div>
-        </div>
-    `;
-  // Agrega la tarjeta al contenedor
-    Animales.innerHTML += card;
-});
 
+        if (animal && edad && comentarios) {
+            let selectedAnimal; 
+            
+            if (nombre == "Leon") {
+                selectedAnimal = new Leon(nombre, edad, imagen, comentarios, sonido);
+            } else if (nombre == "Lobo") {
+                selectedAnimal = new Lobo(nombre, edad, imagen, comentarios, sonido);
+            } else if (nombre == "Oso") {
+                selectedAnimal = new Oso(nombre, edad, imagen, comentarios, sonido);
+            } else if (nombre == "Serpiente") {
+                selectedAnimal = new Serpiente(nombre, edad, imagen, comentarios, sonido);
+            } else {
+                selectedAnimal = new Aguila(nombre, edad, imagen, comentarios, sonido);
+            };
+            console.log(selectedAnimal)
+            animalitos.push(selectedAnimal)
+            mostrarCard()
+
+            //Para limpiar los inputs
+        let selector = document.getElementById("animal");
+        let selectorEdad = document.getElementById("edad");
+        let comentariosSelect = document.getElementById("comentarios");
+        selector.selectedIndex = 0;
+        selectorEdad.selectedIndex = 0;
+        comentariosSelect.value = '';
+        preview.style.backgroundImage = '';
             
         } else {
             alert("Por favor, ingresar los datos solicitados");
@@ -80,4 +84,76 @@ animales.forEach(animal => {
     
 });
     
+ // Recorre la lista de animales y crea una tarjeta para cada uno
+function mostrarCard() {
+    
+    let animalesContainer = document.getElementById('Animales');
+    animalesContainer.innerHTML = "";
+    console.log(animalitos)
+    animalitos.forEach((a, i) => {
+        console.log(a.nombre)
+        animalesContainer.innerHTML += `
+            <div class="px-3 pb-2">
+                <div class="bg-dark text-white">
+                    <img
+                        height="200"
+                        width="200"
+                        src="./assets/imgs/${a.img}"
+                        data-toggle="modal" data-target="#exampleModal"
+                        onclick="modalDetails('${i}')"
+                    />
+                <div>
+                    <button
+                        onclick="playSound('${a.nombre}')"
+                        class="btn btn-secondary w-100"> 
+                        <img height="30" src="assets/imgs/audio.svg" /> 
+                    </button>
+            </div>
+                    `;
+            });
+};
 
+//Validación de animales para emitir sonido
+window.playSound = (name) => {
+    let animal = animalitos.find((a) => a.nombre === name)
+    if (animal.nombre == 'Leon') {
+        console.log(name)
+        animal.rugir()
+    } else if (animal.nombre == 'Lobo') {
+        console.log(name)
+        animal.aullar()
+    } else if (animal.nombre == 'Oso') {
+        console.log(name)
+        animal.grunir()
+    } else if (animal.nombre == 'Serpiente') {
+        console.log(name)
+        animal.sisear()
+    } else {
+        animal.chillar()
+    }
+};
+
+//Diseño de modal
+window.modalDetails = (i) => {
+    const modalBody = document.getElementsByClassName("modal-body")[0];
+    const animal = animalitos[i];
+    comentarios.innerHTML = "";
+    console.log(animalitos)
+    modalBody.innerHTML = `
+    <div class="px-3 pb-2">
+        <div class="card w-50 m-auto bg-dark text-white border-0">
+            <img
+            src="./assets/imgs/${animal._img}"
+            class="d-block m-auto w-100"
+            />
+        <div class="card-body text-center">
+            <h6 class="card-text ">${animal._edad}</h6>
+            <h6 class="card-text m-0">Comentarios</h6>
+            <hr/>
+            <p>${animal._comentarios}</p>
+        </div>
+    </div>
+    </div>
+    `;
+
+};
